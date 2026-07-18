@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cobertura Express REINOW</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Josefin+Sans:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --roxo-deep: #0d0015;
+  --roxo-dark: #1a0028;
+  --roxo-mid: #2d0045;
+  --roxo-base: #4b095d;
+  --roxo-light: #7b1a9a;
+  --gold: #d8a43e;
+  --gold-light: #f0c060;
+  --gold-pale: #fdf6e3;
+  --lp: #f0e8f5;
+  --branco: #ffffff;
+  --escuro: #1a1a1a;
+  --mid: #666;
+  --borda: rgba(216,164,62,.2);
+  --glass: rgba(255,255,255,.04);
+  --glass-border: rgba(255,255,255,.08);
+  --gr: #1D9E75;
+}
+html { scroll-behavior: smooth; }
+body { font-family: 'Josefin Sans', sans-serif; color: var(--escuro); background: var(--roxo-deep); overflow-x: hidden; }
+
+/* ── GLOW EFFECTS ── */
+.glow-gold { box-shadow: 0 0 40px rgba(216,164,62,.12); }
+.glow-roxo { box-shadow: 0 0 60px rgba(75,9,93,.4); }
+
+/* ── TOPBAR ── */
+.topbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  background: rgba(13,0,21,.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--borda);
+  padding: 14px 32px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.logo { font-family: 'Cinzel', serif; font-size: 18px; font-weight: 700; color: var(--gold); letter-spacing: .08em; }
+.logo span { font-size: 10px; color: rgba(201,168,212,.6); display: block; letter-spacing: .12em; font-weight: 400; margin-top: 1px; }
+.btn-top { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%); color: var(--roxo-base); font-family: 'Cinzel', serif; font-size: 11px; font-weight: 700; padding: 10px 22px; border: none; border-radius: 6px; cursor: pointer; text-decoration: none; letter-spacing: .06em; }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(123,26,154,.25) 0%, transparent 70%),
+              radial-gradient(ellipse 40% 40% at 80% 80%, rgba(216,164,62,.06) 0%, transparent 60%),
+              var(--roxo-deep);
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 120px 32px 80px;
+  position: relative; overflow: hidden;
+}
+.hero-orbs {
+  position: absolute; inset: 0; pointer-events: none;
+}
+.orb {
+  position: absolute; border-radius: 50%;
+  filter: blur(80px); opacity: .15;
+}
+.orb1 { width: 500px; height: 500px; background: #7b1a9a; top: -100px; left: -100px; }
+.orb2 { width: 400px; height: 400px; background: #d8a43e; bottom: -150px; right: -100px; opacity: .06; }
+.orb3 { width: 300px; height: 300px; background: #4b095d; top: 40%; left: 60%; }
+
+.hero-inner { max-width: 1100px; margin: 0 auto; width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+.hero-content {}
+.hero-eyebrow { font-family: 'Cinzel', serif; font-size: 10px; color: var(--gold); letter-spacing: .2em; text-transform: uppercase; margin-bottom: 20px; opacity: .8; }
+.hero h1 { font-family: 'Cinzel', serif; font-size: clamp(28px, 4vw, 48px); font-weight: 700; color: var(--branco); line-height: 1.15; margin-bottom: 20px; }
+.hero h1 em { font-style: normal; background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.hero-sub { font-size: 15px; color: rgba(201,168,212,.8); line-height: 1.8; margin-bottom: 36px; max-width: 460px; }
+.hero-cta { display: inline-block; background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%); color: var(--roxo-dark); font-family: 'Cinzel', serif; font-size: 13px; font-weight: 700; padding: 16px 36px; border-radius: 6px; text-decoration: none; letter-spacing: .04em; margin-bottom: 12px; }
+.hero-area { font-size: 11px; color: rgba(255,255,255,.3); letter-spacing: .06em; margin-top: 4px; }
+
+/* HERO MEDIA GRID */
+.hero-media { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 240px 240px; gap: 10px; }
+.media-slot {
+  border-radius: 12px; overflow: hidden; position: relative;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; padding: 20px; cursor: pointer;
+}
+.media-slot.tall { grid-row: span 2; }
+.media-slot.video-slot::before { content: '▶'; font-size: 28px; color: var(--gold); opacity: .7; margin-bottom: 10px; display: block; }
+.media-slot.foto-slot::before { content: '🖼'; font-size: 24px; margin-bottom: 10px; display: block; opacity: .5; }
+.media-label { font-family: 'Cinzel', serif; font-size: 9px; color: var(--gold); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 6px; }
+.media-desc { font-size: 11px; color: rgba(255,255,255,.35); line-height: 1.5; }
+.media-tag { position: absolute; top: 10px; left: 10px; background: var(--gold); color: var(--roxo-dark); font-size: 9px; font-weight: 700; padding: 3px 8px; border-radius: 4px; font-family: 'Cinzel', serif; letter-spacing: .06em; }
+
+/* ── STATS STRIP ── */
+.stats-strip {
+  background: rgba(255,255,255,.03);
+  border-top: 1px solid var(--borda);
+  border-bottom: 1px solid var(--borda);
+  padding: 32px;
+  backdrop-filter: blur(10px);
+}
+.stats-inner { max-width: 900px; margin: 0 auto; display: flex; justify-content: center; gap: 64px; flex-wrap: wrap; }
+.stat { text-align: center; }
+.stat-num { font-family: 'Cinzel', serif; font-size: 36px; font-weight: 700; color: var(--gold); display: block; line-height: 1; }
+.stat-lbl { font-size: 11px; color: rgba(201,168,212,.6); margin-top: 4px; letter-spacing: .04em; }
+
+/* ── SEÇÃO GENÉRICA ── */
+.sec { padding: 88px 32px; }
+.sec-inner { max-width: 1100px; margin: 0 auto; }
+.sec-header { text-align: center; margin-bottom: 56px; }
+.sec-eyebrow { font-family: 'Cinzel', serif; font-size: 10px; color: var(--gold); letter-spacing: .2em; text-transform: uppercase; margin-bottom: 12px; opacity: .8; }
+.sec-titulo { font-family: 'Cinzel', serif; font-size: clamp(22px, 3.5vw, 36px); font-weight: 700; line-height: 1.2; margin-bottom: 14px; }
+.sec-sub { font-size: 15px; line-height: 1.8; max-width: 540px; margin: 0 auto; }
+.claro .sec-titulo { color: var(--roxo-base); }
+.claro .sec-sub { color: var(--mid); }
+.escuro-sec .sec-titulo { color: var(--branco); }
+.escuro-sec .sec-sub { color: rgba(201,168,212,.7); }
+
+/* ── DIFERENCIAL ── */
+.dif-section { background: var(--lp); }
+.dif-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+.dif-card { background: var(--branco); border: 1px solid rgba(75,9,93,.1); border-radius: 12px; padding: 28px 24px; }
+.dif-icon { width: 44px; height: 44px; background: var(--roxo-base); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 16px; }
+.dif-titulo { font-family: 'Cinzel', serif; font-size: 13px; font-weight: 700; color: var(--roxo-base); margin-bottom: 8px; }
+.dif-desc { font-size: 13px; color: var(--mid); line-height: 1.7; }
+
+/* ── GALERIA EMOCIONAL ── */
+.galeria-section {
+  background: radial-gradient(ellipse 100% 80% at 50% 50%, rgba(75,9,93,.3) 0%, var(--roxo-deep) 100%);
+}
+.galeria-titulo-grande { font-family: 'Cinzel', serif; font-size: clamp(32px, 5vw, 56px); font-weight: 700; color: var(--branco); text-align: center; margin-bottom: 16px; line-height: 1.1; }
+.galeria-titulo-grande em { font-style: normal; background: linear-gradient(135deg, var(--gold), var(--gold-light)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.galeria-sub { text-align: center; font-size: 15px; color: rgba(201,168,212,.7); max-width: 500px; margin: 0 auto 56px; line-height: 1.8; }
+
+.galeria-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 280px 280px; gap: 12px; max-width: 1000px; margin: 0 auto; }
+.gal-item { border-radius: 14px; overflow: hidden; position: relative; }
+.gal-item.grande { grid-row: span 2; }
+.gal-item.wide { grid-column: span 2; }
+.gal-slot {
+  width: 100%; height: 100%;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; padding: 24px;
+}
+.gal-slot-icon { font-size: 32px; margin-bottom: 12px; opacity: .4; }
+.gal-slot-label { font-family: 'Cinzel', serif; font-size: 9px; color: var(--gold); letter-spacing: .12em; text-transform: uppercase; margin-bottom: 8px; }
+.gal-slot-desc { font-size: 12px; color: rgba(255,255,255,.3); line-height: 1.6; max-width: 200px; }
+.gal-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(13,0,21,.8)); padding: 20px 16px 16px; }
+.gal-emocao { font-family: 'Cinzel', serif; font-size: 12px; color: var(--gold); letter-spacing: .06em; }
+
+/* ── VIDEO DESTAQUE ── */
+.video-section {
+  background: var(--roxo-dark);
+  border-top: 1px solid var(--borda);
+  border-bottom: 1px solid var(--borda);
+}
+.video-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+.video-content .sec-titulo { color: var(--branco); margin-bottom: 16px; }
+.video-content .sec-sub { color: rgba(201,168,212,.7); margin: 0 0 28px; max-width: 100%; }
+.video-lista { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.video-lista li { display: flex; gap: 12px; align-items: flex-start; font-size: 13px; color: rgba(201,168,212,.8); line-height: 1.6; }
+.video-lista li::before { content: '→'; color: var(--gold); font-family: 'Cinzel', serif; flex-shrink: 0; margin-top: 1px; }
+.video-placeholder {
+  border-radius: 16px; overflow: hidden;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  aspect-ratio: 9/16; max-height: 500px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; padding: 32px; position: relative;
+}
+.video-play { width: 64px; height: 64px; border-radius: 50%; background: rgba(216,164,62,.15); border: 1px solid var(--borda); display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 20px; }
+.video-placeholder-label { font-family: 'Cinzel', serif; font-size: 10px; color: var(--gold); letter-spacing: .14em; text-transform: uppercase; margin-bottom: 8px; }
+.video-placeholder-desc { font-size: 12px; color: rgba(255,255,255,.3); line-height: 1.6; }
+.video-tag { position: absolute; top: 14px; right: 14px; background: rgba(216,164,62,.15); border: 1px solid var(--borda); color: var(--gold); font-size: 9px; font-family: 'Cinzel', serif; padding: 4px 10px; border-radius: 4px; letter-spacing: .08em; }
+
+/* ── ENTREGA ── */
+.entrega-section { background: var(--lp); }
+.entrega-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 600px) { .entrega-grid { grid-template-columns: 1fr; } }
+.entrega-item { background: var(--branco); border-radius: 12px; padding: 24px; border-left: 4px solid var(--roxo-base); display: flex; gap: 16px; }
+.entrega-num { font-family: 'Cinzel', serif; font-size: 28px; font-weight: 700; color: var(--gold); flex-shrink: 0; line-height: 1; margin-top: 2px; }
+.entrega-titulo { font-family: 'Cinzel', serif; font-size: 13px; font-weight: 700; color: var(--roxo-base); margin-bottom: 6px; }
+.entrega-desc { font-size: 13px; color: var(--mid); line-height: 1.7; }
+.bonus-card { margin-top: 16px; background: var(--roxo-base); border-radius: 12px; padding: 24px 28px; display: flex; gap: 18px; align-items: center; }
+.bonus-icon { font-size: 28px; flex-shrink: 0; }
+.bonus-label { font-family: 'Cinzel', serif; font-size: 10px; color: var(--gold); letter-spacing: .12em; text-transform: uppercase; margin-bottom: 6px; }
+.bonus-texto { font-size: 13px; color: rgba(232,216,240,.85); line-height: 1.6; }
+.bonus-texto strong { color: var(--gold); }
+
+/* ── PROCESSO ── */
+.processo-section {
+  background: radial-gradient(ellipse 80% 60% at 50% 100%, rgba(123,26,154,.2) 0%, var(--roxo-deep) 80%);
+}
+.steps { display: flex; flex-direction: column; max-width: 680px; margin: 0 auto; }
+.step-item { display: flex; gap: 20px; align-items: flex-start; position: relative; }
+.step-item:not(:last-child)::after { content: ''; position: absolute; left: 19px; top: 42px; bottom: -16px; width: 1px; background: linear-gradient(var(--borda), transparent); }
+.step-circle { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, var(--gold), var(--gold-light)); display: flex; align-items: center; justify-content: center; font-family: 'Cinzel', serif; font-size: 14px; font-weight: 700; color: var(--roxo-dark); flex-shrink: 0; }
+.step-body { padding-bottom: 36px; flex: 1; }
+.step-titulo { font-family: 'Cinzel', serif; font-size: 14px; font-weight: 700; color: var(--branco); margin-bottom: 6px; }
+.step-desc { font-size: 13px; color: rgba(201,168,212,.7); line-height: 1.7; }
+
+/* ── DEPOIMENTO ── */
+.dep-section { background: var(--lp); }
+.dep-inner { max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+.dep-foto-slot { border-radius: 16px; overflow: hidden; background: rgba(75,9,93,.08); border: 1px solid rgba(75,9,93,.15); aspect-ratio: 3/4; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 24px; }
+.dep-foto-icon { font-size: 36px; margin-bottom: 12px; opacity: .3; }
+.dep-foto-label { font-family: 'Cinzel', serif; font-size: 9px; color: var(--roxo-base); letter-spacing: .12em; text-transform: uppercase; margin-bottom: 8px; }
+.dep-foto-desc { font-size: 12px; color: var(--mid); line-height: 1.6; }
+.dep-content {}
+.dep-aspas { font-family: 'Cinzel', serif; font-size: 72px; color: var(--gold); line-height: .5; margin-bottom: 20px; display: block; opacity: .4; }
+.dep-texto { font-size: 16px; color: var(--escuro); line-height: 1.9; font-style: italic; margin-bottom: 24px; }
+.dep-nome { font-family: 'Cinzel', serif; font-size: 14px; font-weight: 700; color: var(--roxo-base); }
+.dep-cargo { font-size: 12px; color: var(--mid); margin-top: 4px; }
+.dep-badge { display: inline-block; background: var(--roxo-base); color: var(--gold); font-family: 'Cinzel', serif; font-size: 10px; padding: 5px 14px; border-radius: 20px; margin-top: 12px; letter-spacing: .06em; }
+
+/* ── ORÇAMENTO ── */
+.orc-section {
+  background: radial-gradient(ellipse 100% 80% at 50% 0%, rgba(75,9,93,.3) 0%, var(--roxo-deep) 70%);
+}
+.orc-inner { max-width: 680px; margin: 0 auto; }
+.form-card { background: rgba(255,255,255,.03); border: 1px solid var(--glass-border); border-radius: 20px; padding: 40px 36px; backdrop-filter: blur(20px); }
+.form-progress { display: flex; gap: 6px; margin-bottom: 32px; }
+.prog-dot { flex: 1; height: 3px; border-radius: 2px; background: rgba(255,255,255,.08); transition: background .3s; }
+.prog-dot.done { background: var(--roxo-light); }
+.prog-dot.active { background: var(--gold); }
+.form-titulo { font-family: 'Cinzel', serif; font-size: 20px; font-weight: 700; color: var(--branco); margin-bottom: 6px; }
+.form-sub { font-size: 13px; color: rgba(201,168,212,.6); margin-bottom: 28px; line-height: 1.6; }
+.campo { margin-bottom: 18px; }
+.campo label { display: block; font-size: 10px; font-weight: 600; color: rgba(201,168,212,.6); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 8px; }
+.campo input, .campo select, .campo textarea {
+  width: 100%; background: rgba(255,255,255,.06); border: 1px solid var(--glass-border);
+  border-radius: 8px; padding: 12px 16px; font-family: 'Josefin Sans', sans-serif;
+  font-size: 14px; color: var(--branco); outline: none; transition: border .2s; appearance: none;
+}
+.campo input::placeholder, .campo textarea::placeholder { color: rgba(255,255,255,.2); }
+.campo select option { background: var(--roxo-dark); color: var(--branco); }
+.campo input:focus, .campo select:focus, .campo textarea:focus { border-color: rgba(216,164,62,.5); }
+.campo textarea { resize: vertical; min-height: 80px; }
+.horas-selector { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 6px; }
+.hora-btn { border: 1px solid var(--glass-border); border-radius: 8px; padding: 10px 4px; text-align: center; cursor: pointer; font-family: 'Cinzel', serif; font-size: 13px; font-weight: 600; color: rgba(255,255,255,.4); background: rgba(255,255,255,.03); transition: all .2s; }
+.hora-btn:hover { border-color: rgba(216,164,62,.4); color: var(--gold); }
+.hora-btn.sel { border-color: var(--gold); background: rgba(216,164,62,.1); color: var(--gold); }
+.hora-btn .desc { font-size: 9px; font-weight: 400; font-family: 'Josefin Sans', sans-serif; display: block; margin-top: 2px; opacity: .6; }
+.btn-avancar { width: 100%; background: linear-gradient(135deg, var(--gold), var(--gold-light)); color: var(--roxo-dark); font-family: 'Cinzel', serif; font-size: 14px; font-weight: 700; padding: 16px; border: none; border-radius: 8px; cursor: pointer; letter-spacing: .04em; margin-top: 8px; }
+.btn-voltar { background: none; border: none; color: rgba(255,255,255,.3); font-size: 12px; cursor: pointer; margin-top: 12px; display: block; width: 100%; text-align: center; font-family: 'Josefin Sans', sans-serif; }
+.btn-voltar:hover { color: var(--gold); }
+.form-step { display: none; }
+.form-step.ativo { display: block; }
+.resultado-box { background: linear-gradient(135deg, var(--roxo-base) 0%, var(--roxo-dark) 100%); border: 1px solid var(--borda); border-radius: 14px; padding: 32px; text-align: center; margin-bottom: 20px; }
+.resultado-label { font-family: 'Cinzel', serif; font-size: 10px; color: rgba(201,168,212,.6); letter-spacing: .14em; text-transform: uppercase; margin-bottom: 8px; }
+.resultado-valor { font-family: 'Cinzel', serif; font-size: 52px; font-weight: 700; color: var(--gold); line-height: 1; margin-bottom: 8px; }
+.resultado-detalhe { font-size: 13px; color: rgba(201,168,212,.6); }
+.resultado-aviso { background: rgba(216,164,62,.08); border: 1px solid rgba(216,164,62,.2); border-radius: 8px; padding: 14px 16px; font-size: 13px; color: rgba(216,164,62,.8); line-height: 1.6; margin-bottom: 20px; }
+.resultado-inclui { background: rgba(255,255,255,.04); border: 1px solid var(--glass-border); border-radius: 10px; padding: 20px; margin-bottom: 20px; }
+.inclui-titulo { font-family: 'Cinzel', serif; font-size: 11px; font-weight: 700; color: var(--gold); letter-spacing: .08em; margin-bottom: 12px; text-transform: uppercase; }
+.inclui-item { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; font-size: 13px; color: rgba(255,255,255,.6); line-height: 1.5; }
+.inclui-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--gold); flex-shrink: 0; margin-top: 6px; }
+.btn-wpp { display: block; width: 100%; background: #25D366; color: var(--branco); font-family: 'Cinzel', serif; font-size: 15px; font-weight: 700; padding: 16px; border: none; border-radius: 8px; cursor: pointer; text-align: center; text-decoration: none; }
+.resultado-nota { text-align: center; font-size: 11px; color: rgba(255,255,255,.25); margin-top: 12px; line-height: 1.6; }
+
+/* ── PORTFÓLIO ── */
+.port-section { background: var(--lp); }
+.port-nums { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin-bottom: 48px; }
+.port-num { background: var(--roxo-base); border-radius: 12px; padding: 28px 16px; text-align: center; }
+.port-num-val { font-family: 'Cinzel', serif; font-size: 40px; font-weight: 700; color: var(--gold); display: block; }
+.port-num-lbl { font-size: 12px; color: rgba(201,168,212,.7); margin-top: 4px; }
+.port-video-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 32px; }
+.port-video-slot { border-radius: 12px; overflow: hidden; background: rgba(75,9,93,.08); border: 1px solid rgba(75,9,93,.15); aspect-ratio: 9/16; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
+.port-video-icon { font-size: 28px; margin-bottom: 10px; opacity: .3; }
+.port-video-label { font-family: 'Cinzel', serif; font-size: 9px; color: var(--roxo-base); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 6px; }
+.port-video-desc { font-size: 11px; color: var(--mid); line-height: 1.6; }
+.port-tipos { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.tipo-tag { background: var(--branco); border: 1px solid rgba(75,9,93,.15); border-radius: 20px; padding: 7px 18px; font-size: 12px; color: var(--roxo-base); font-weight: 600; }
+
+/* ── FAQ ── */
+.faq-section { background: var(--roxo-dark); border-top: 1px solid var(--borda); }
+.faq-inner { max-width: 680px; margin: 0 auto; }
+.faq-item { border-bottom: 1px solid rgba(255,255,255,.06); padding: 22px 0; }
+.faq-item:last-child { border-bottom: none; }
+.faq-q { font-family: 'Cinzel', serif; font-size: 14px; font-weight: 600; color: var(--gold); margin-bottom: 10px; }
+.faq-a { font-size: 13px; color: rgba(201,168,212,.65); line-height: 1.8; }
+
+/* ── FOOTER ── */
+footer { background: var(--roxo-deep); border-top: 1px solid var(--borda); padding: 40px 32px; text-align: center; }
+.footer-logo { font-family: 'Cinzel', serif; font-size: 22px; font-weight: 700; color: var(--gold); margin-bottom: 6px; }
+.footer-sub { font-size: 12px; color: rgba(201,168,212,.4); margin-bottom: 20px; }
+.footer-area { font-size: 11px; color: rgba(255,255,255,.2); margin-top: 16px; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .hero-inner { grid-template-columns: 1fr; gap: 40px; }
+  .hero-media { grid-template-rows: 180px 180px; }
+  .video-inner { grid-template-columns: 1fr; }
+  .dep-inner { grid-template-columns: 1fr; }
+  .galeria-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+  .gal-item.grande { grid-row: span 1; }
+  .gal-item.wide { grid-column: span 2; }
+  .port-video-row { grid-template-columns: 1fr; }
+  .horas-selector { grid-template-columns: repeat(3, 1fr); }
+  .stats-inner { gap: 32px; }
+  .form-card { padding: 28px 20px; }
+  .topbar { padding: 12px 20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="logo">REINOW<span>Cobertura Express</span></div>
+  <a href="#orcamento" class="btn-top">Solicitar orçamento</a>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-orbs"><div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div></div>
+  <div class="hero-inner">
+    <div class="hero-content">
+      <p class="hero-eyebrow">Grande ABC · São Paulo · Desde 2022</p>
+      <h1>O seu evento merece ser <em>visto</em>. A gente faz isso acontecer.</h1>
+      <p class="hero-sub">Cobertura com olhar humano — capturamos não só o que acontece, mas o que as pessoas sentem. Stories, vídeo principal e material bruto entregues no mesmo dia.</p>
+      <a href="#orcamento" class="hero-cta">Quero um orçamento →</a>
+      <p class="hero-area">Atendemos Grande ABC e Grande São Paulo</p>
+    </div>
+    <div class="hero-media">
+      <div class="media-slot video-slot tall">
+        <div class="media-tag">VÍDEO</div>
+        <span class="media-label">Vídeo principal</span>
+        <p class="media-desc">Inserir aqui: melhor Reel de cobertura de evento — de 30 a 60 segundos</p>
+      </div>
+      <div class="media-slot foto-slot">
+        <div class="media-tag">FOTO</div>
+        <span class="media-label">Emoção</span>
+        <p class="media-desc">Foto: pessoas abraçando, chorando ou comemorando num evento</p>
+      </div>
+      <div class="media-slot foto-slot">
+        <div class="media-tag">FOTO</div>
+        <span class="media-label">Bastidor</span>
+        <p class="media-desc">Foto: equipe REINOW em ação durante a cobertura</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-strip">
+  <div class="stats-inner">
+    <div class="stat"><span class="stat-num">+177</span><span class="stat-lbl">coberturas realizadas</span></div>
+    <div class="stat"><span class="stat-num">+1.062</span><span class="stat-lbl">stories entregues</span></div>
+    <div class="stat"><span class="stat-num">+200</span><span class="stat-lbl">reels entregues</span></div>
+    <div class="stat"><span class="stat-num">400k+</span><span class="stat-lbl">views em reels</span></div>
+  </div>
+</div>
+
+<!-- DIFERENCIAIS -->
+<section class="sec dif-section claro">
+  <div class="sec-inner">
+    <div class="sec-header">
+      <p class="sec-eyebrow">Por que a REINOW</p>
+      <h2 class="sec-titulo">Não é só capturar. É enxergar.</h2>
+      <p class="sec-sub">Nosso olhar é humano e real. Capturamos a emoção das pessoas, os detalhes que passam despercebidos, os momentos que fazem um evento ser inesquecível.</p>
+    </div>
+    <div class="dif-grid">
+      <div class="dif-card"><div class="dif-icon">🎬</div><div class="dif-titulo">Roteiro exclusivo</div><div class="dif-desc">Antes de cada evento, montamos um roteiro personalizado com textos, músicas e agenda. Você aprova. A gente executa.</div></div>
+      <div class="dif-card"><div class="dif-icon">⚡</div><div class="dif-titulo">Entrega no mesmo dia</div><div class="dif-desc">Stories durante o evento em tempo real. Vídeo principal e material bruto entregues antes de você dormir.</div></div>
+      <div class="dif-card"><div class="dif-icon">💜</div><div class="dif-titulo">Olhar que emociona</div><div class="dif-desc">Não filmamos eventos. Documentamos momentos. Cada detalhe, cada olhar, cada abraço que não pode ser reencenado.</div></div>
+      <div class="dif-card"><div class="dif-icon">✅</div><div class="dif-titulo">Aprovação prévia</div><div class="dif-desc">Você aprova os textos dos stories antes do evento começar. Sem surpresa, sem retrabalho.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- GALERIA EMOCIONAL -->
+<section class="sec galeria-section escuro-sec">
+  <div class="sec-inner">
+    <h2 class="galeria-titulo-grande">Cada evento tem um momento <em>que não volta.</em></h2>
+    <p class="galeria-sub">A gente está lá para capturar esse momento antes que ele vá embora.</p>
+    <div class="galeria-grid">
+      <div class="gal-item grande">
+        <div class="gal-slot">
+          <div class="gal-slot-icon">📸</div>
+          <div class="gal-slot-label">Foto vertical grande</div>
+          <div class="gal-slot-desc">Inserir aqui: foto de pessoa chorando ou com expressão de emoção intensa num evento</div>
+        </div>
+        <div class="gal-overlay"><div class="gal-emocao">O momento que ela não esperava.</div></div>
+      </div>
+      <div class="gal-item">
+        <div class="gal-slot">
+          <div class="gal-slot-icon">📸</div>
+          <div class="gal-slot-label">Foto horizontal</div>
+          <div class="gal-slot-desc">Foto: abraço entre duas pessoas num evento — espontâneo</div>
+        </div>
+        <div class="gal-overlay"><div class="gal-emocao">O abraço que durou mais do que o discurso.</div></div>
+      </div>
+      <div class="gal-item">
+        <div class="gal-slot">
+          <div class="gal-slot-icon">📸</div>
+          <div class="gal-slot-label">Foto horizontal</div>
+          <div class="gal-slot-desc">Foto: pessoas rindo juntas, levantando taça ou comemorando</div>
+        </div>
+        <div class="gal-overlay"><div class="gal-emocao">A alegria que todo mundo sentiu mas ninguém fotografou.</div></div>
+      </div>
+      <div class="gal-item wide">
+        <div class="gal-slot">
+          <div class="gal-slot-icon">🎬</div>
+          <div class="gal-slot-label">Vídeo ou foto panorâmica</div>
+          <div class="gal-slot-desc">Inserir aqui: foto panorâmica do evento lotado ou vídeo aéreo — transmite escala e energia</div>
+        </div>
+        <div class="gal-overlay"><div class="gal-emocao">A energia que você só vê quando alguém captura de fora.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VÍDEO DESTAQUE -->
+<section class="sec video-section escuro-sec">
+  <div class="sec-inner">
+    <div class="video-inner">
+      <div class="video-content">
+        <p class="sec-eyebrow">Veja na prática</p>
+        <h2 class="sec-titulo">Como fica na prática</h2>
+        <p class="sec-sub">Do bastidor à entrega — veja uma cobertura real da REINOW do começo ao fim.</p>
+        <ul class="video-lista">
+          <li>Stories em tempo real durante todo o evento</li>
+          <li>Vídeo principal editado no mesmo dia</li>
+          <li>Material bruto entregue antes de você dormir</li>
+          <li>Roteiro personalizado para cada tipo de evento</li>
+        </ul>
+      </div>
+      <div class="video-placeholder">
+        <div class="video-tag">VÍDEO</div>
+        <div class="video-play">▶</div>
+        <div class="video-placeholder-label">Vídeo de cobertura real</div>
+        <div class="video-placeholder-desc">Inserir aqui: Reel de 60 segundos mostrando bastidor + entrega de uma cobertura real. Formato 9:16 ou 4:5.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ENTREGA -->
+<section class="sec entrega-section claro">
+  <div class="sec-inner">
+    <div class="sec-header">
+      <p class="sec-eyebrow">O que está incluído</p>
+      <h2 class="sec-titulo">Tudo que você precisa. No mesmo dia.</h2>
+      <p class="sec-sub">Cada cobertura inclui um pacote completo — sem cobranças extras por edição ou entrega.</p>
+    </div>
+    <div class="entrega-grid">
+      <div class="entrega-item"><div class="entrega-num">01</div><div><div class="entrega-titulo">Roteiro exclusivo</div><div class="entrega-desc">Planejamos cada momento antes do evento. Músicas, textos e agenda alinhados com você.</div></div></div>
+      <div class="entrega-item"><div class="entrega-num">02</div><div><div class="entrega-titulo">Mínimo de 6 stories</div><div class="entrega-desc">Com aprovação prévia dos textos. Vão ao ar durante o evento em tempo real.</div></div></div>
+      <div class="entrega-item"><div class="entrega-num">03</div><div><div class="entrega-titulo">Vídeo principal</div><div class="entrega-desc">Um vídeo de até 1 minuto mostrando os melhores momentos. Editado e entregue no mesmo dia.</div></div></div>
+      <div class="entrega-item"><div class="entrega-num">04</div><div><div class="entrega-titulo">Material bruto</div><div class="entrega-desc">Todo o material gravado no evento. Entregue via Google Drive ou AirDrop antes de você sair.</div></div></div>
+    </div>
+    <div class="bonus-card">
+      <div class="bonus-icon">🎁</div>
+      <div><div class="bonus-label">Bônus incluído</div><div class="bonus-texto">O material bruto é seu. Use como <strong>conteúdo de redes sociais pelos próximos meses</strong> — uma cobertura pode gerar semanas de conteúdo orgânico.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESSO -->
+<section class="sec processo-section escuro-sec">
+  <div class="sec-inner">
+    <div class="sec-header">
+      <p class="sec-eyebrow">Como funciona</p>
+      <h2 class="sec-titulo">Do primeiro contato ao material em mãos</h2>
+      <p class="sec-sub">Processo simples, comunicação clara e você tranquila no seu evento.</p>
+    </div>
+    <div class="steps">
+      <div class="step-item"><div class="step-circle">1</div><div class="step-body"><div class="step-titulo">Você faz o orçamento online</div><div class="step-desc">Preenche as informações do evento e já recebe o valor estimado na hora.</div></div></div>
+      <div class="step-item"><div class="step-circle">2</div><div class="step-body"><div class="step-titulo">A gente alinha os detalhes</div><div class="step-desc">Entramos em contato para entender o evento, tirar dúvidas e confirmar a data. Prazo mínimo: 5 dias antes.</div></div></div>
+      <div class="step-item"><div class="step-circle">3</div><div class="step-body"><div class="step-titulo">Você aprova o roteiro</div><div class="step-desc">Montamos o roteiro com textos, músicas e agenda. Você revisa e aprova com tranquilidade.</div></div></div>
+      <div class="step-item"><div class="step-circle">4</div><div class="step-body"><div class="step-titulo">A gente cobre o evento</div><div class="step-desc">Stories em tempo real, captação de todos os momentos com olhar humano e atencioso.</div></div></div>
+      <div class="step-item"><div class="step-circle">5</div><div class="step-body" style="padding-bottom:0"><div class="step-titulo">Você recebe tudo no mesmo dia</div><div class="step-desc">Vídeo editado e material bruto via Drive ou AirDrop. Antes de dormir, tudo está na sua mão.</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- DEPOIMENTO -->
+<section class="sec dep-section claro">
+  <div class="sec-inner">
+    <div class="sec-header">
+      <p class="sec-eyebrow">Quem já contratou</p>
+      <h2 class="sec-titulo">Quem confia, volta.</h2>
+    </div>
+    <div class="dep-inner">
+      <div class="dep-foto-slot">
+        <div class="dep-foto-icon">📸</div>
+        <div class="dep-foto-label">Foto da cliente</div>
+        <div class="dep-foto-desc">Inserir aqui: foto da Keyla — de preferência num dos eventos cobertos. Formato vertical 3:4.</div>
+      </div>
+      <div class="dep-content">
+        <span class="dep-aspas">"</span>
+        <p class="dep-texto">A REINOW não cobre eventos — ela captura momentos que eu nem percebo que estão acontecendo. Já fechamos 5 eventos juntas e tem mais um agendado para dezembro. A entrega no mesmo dia é o que me faz continuar contratando.</p>
+        <div class="dep-nome">Keyla</div>
+        <div class="dep-cargo">Cliente recorrente · 5 eventos cobertos</div>
+        <div class="dep-badge">Dezembro 2025 já fechado</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ORÇAMENTO -->
+<section class="sec orc-section escuro-sec" id="orcamento">
+  <div class="sec-inner">
+    <div class="sec-header">
+      <p class="sec-eyebrow">Orçamento</p>
+      <h2 class="sec-titulo">Quanto custa cobrir o seu evento?</h2>
+      <p class="sec-sub">Preencha as informações e descubra o valor estimado na hora.</p>
+    </div>
+    <div class="orc-inner">
+      <div class="form-card">
+
+        <!-- STEP 1 -->
+        <div class="form-step ativo" id="step1">
+          <div class="form-progress"><div class="prog-dot active"></div><div class="prog-dot"></div><div class="prog-dot"></div></div>
+          <div class="form-titulo">Sobre o evento</div>
+          <div class="form-sub">Conta um pouco sobre o evento para calcularmos o valor estimado.</div>
+          <div class="campo"><label>Onde será o evento?</label><select id="local"><option value="">Selecione a região</option><option value="abc">Grande ABC Paulista</option><option value="sp">Grande São Paulo</option></select></div>
+          <div class="campo"><label>Tipo de evento</label><select id="tipo"><option value="">Selecione o tipo</option><option value="corporativo">Corporativo / Empresarial</option><option value="social">Social / Festa</option><option value="feira">Feira ou Congresso</option><option value="lancamento">Lançamento de produto</option><option value="outro">Outro</option></select></div>
+          <div class="campo"><label>Quantas horas de cobertura?</label>
+            <div class="horas-selector">
+              <div class="hora-btn" onclick="selecionarHora(1)">1h<span class="desc">R$250</span></div>
+              <div class="hora-btn" onclick="selecionarHora(2)">2h<span class="desc">5% off</span></div>
+              <div class="hora-btn" onclick="selecionarHora(3)">3h<span class="desc">10% off</span></div>
+              <div class="hora-btn" onclick="selecionarHora(4)">4h<span class="desc">15% off</span></div>
+              <div class="hora-btn" onclick="selecionarHora(5)">5h<span class="desc">20% off</span></div>
+              <div class="hora-btn" onclick="selecionarHora(6)">6h<span class="desc">22,5% off</span></div>
+              <div class="hora-btn" onclick="selecionarHora(7)">7h<span class="desc">25% off</span></div>
+              <div class="hora-btn" onclick="selecionarHora(8)">8h<span class="desc">27,5% off</span></div>
+              <div class="hora-btn" onclick="selecionarHora(9)">9h+<span class="desc">30% off</span></div>
+            </div>
+          </div>
+          <div class="campo"><label>Como quer ser vista neste evento?</label><textarea id="visibilidade" placeholder="Ex: quero mostrar a energia do evento, os bastidores, os convidados chegando..."></textarea></div>
+          <button class="btn-avancar" onclick="avancarStep2()">Próximo →</button>
+        </div>
+
+        <!-- STEP 2 -->
+        <div class="form-step" id="step2">
+          <div class="form-progress"><div class="prog-dot done"></div><div class="prog-dot active"></div><div class="prog-dot"></div></div>
+          <div class="form-titulo">Seus dados</div>
+          <div class="form-sub">Para entrarmos em contato e confirmar os detalhes do seu evento.</div>
+          <div class="campo"><label>Seu nome</label><input type="text" id="nome" placeholder="Como podemos te chamar?"></div>
+          <div class="campo"><label>WhatsApp com DDD</label><input type="tel" id="whatsapp" placeholder="(11) 99999-9999"></div>
+          <button class="btn-avancar" onclick="avancarStep3()">Ver orçamento →</button>
+          <button class="btn-voltar" onclick="voltarStep1()">← Voltar</button>
+        </div>
+
+        <!-- STEP 3 -->
+        <div class="form-step" id="step3">
+          <div class="form-progress"><div class="prog-dot done"></div><div class="prog-dot done"></div><div class="prog-dot active"></div></div>
+          <div class="form-titulo">Orçamento estimado</div>
+          <div class="resultado-box">
+            <div class="resultado-label">Valor estimado para o seu evento</div>
+            <div class="resultado-valor" id="valor-resultado">—</div>
+            <div class="resultado-detalhe" id="detalhe-resultado"></div>
+          </div>
+          <div class="resultado-aviso">⚡ Este é um <strong>orçamento estimado</strong>. Entraremos em contato pelo WhatsApp para entender melhor o seu evento e confirmar o valor final antes de qualquer compromisso.</div>
+          <div class="resultado-inclui">
+            <div style="background:linear-gradient(135deg,#4b095d,#2d0045);border-radius:10px;padding:14px 18px;margin-bottom:16px;text-align:center">
+  <span style="font-family:Cinzel,serif;font-size:10px;color:rgba(201,168,212,.6);letter-spacing:.14em;text-transform:uppercase;display:block;margin-bottom:6px">Método Exclusivo</span>
+  <span style="font-family:Cinzel,serif;font-size:16px;font-weight:700;color:#d8a43e;display:block;letter-spacing:.06em">CER</span>
+  <span style="font-family:Josefin Sans,sans-serif;font-size:12px;color:rgba(201,168,212,.7);display:block;margin-top:3px">Cobertura Express REINOW</span>
+</div>
+<div class="inclui-titulo">Incluso em todas as coberturas</div>
+            <div class="inclui-item"><div class="inclui-dot"></div>Roteiro exclusivo e personalizado para o evento</div>
+            <div class="inclui-item"><div class="inclui-dot"></div>Mínimo de 6 stories com aprovação prévia dos textos</div>
+            <div class="inclui-item"><div class="inclui-dot"></div>Vídeo principal de até 1 minuto</div>
+            <div class="inclui-item"><div class="inclui-dot"></div>Todo o material bruto entregue no mesmo dia via Drive ou AirDrop</div>
+          </div>
+          <a id="btn-wpp" href="#" class="btn-wpp" target="_blank">💬 Quero reservar minha data</a>
+          <p class="resultado-nota">Prazo mínimo de 5 dias antes do evento · 50% Pix para reservar + 50% no dia ou cartão</p>
+          <button class="btn-voltar" onclick="voltarStep2()">← Ajustar informações</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PORTFÓLIO -->
+<section class="sec port-section claro">
+  <div class="sec-inner">
+    <div class="sec-header">
+      <p class="sec-eyebrow">Portfólio</p>
+      <h2 class="sec-titulo">Já estivemos em todo tipo de evento</h2>
+      <p class="sec-sub">De stands em feiras internacionais a eventos íntimos de 10 pessoas. O olhar é sempre o mesmo: humano.</p>
+    </div>
+    <div class="port-nums">
+      <div class="port-num"><span class="port-num-val">+177</span><span class="port-num-lbl">coberturas feitas</span></div>
+      <div class="port-num"><span class="port-num-val">+1.062</span><span class="port-num-lbl">stories entregues</span></div>
+      <div class="port-num"><span class="port-num-val">+200</span><span class="port-num-lbl">reels entregues</span></div>
+      <div class="port-num"><span class="port-num-val">400k+</span><span class="port-num-lbl">views em reels</span></div>
+    </div>
+    <div class="port-video-row">
+      <div class="port-video-slot"><div class="port-video-icon">🎬</div><div class="port-video-label">Vídeo 1</div><div class="port-video-desc">Inserir aqui: Reel de cobertura em feira ou congresso — formato 9:16</div></div>
+      <div class="port-video-slot"><div class="port-video-icon">🎬</div><div class="port-video-label">Vídeo 2</div><div class="port-video-desc">Inserir aqui: Reel de cobertura em evento social ou festa — formato 9:16</div></div>
+      <div class="port-video-slot"><div class="port-video-icon">🎬</div><div class="port-video-label">Vídeo 3</div><div class="port-video-desc">Inserir aqui: Reel de cobertura corporativa ou lançamento — formato 9:16</div></div>
+    </div>
+    <div class="port-tipos">
+      <div class="tipo-tag">Feiras e congressos</div>
+      <div class="tipo-tag">Eventos corporativos</div>
+      <div class="tipo-tag">Lançamentos de produto</div>
+      <div class="tipo-tag">Festas e confraternizações</div>
+      <div class="tipo-tag">Eventos íntimos</div>
+      <div class="tipo-tag">Coberturas em mansão</div>
+      <div class="tipo-tag">Stands e expositores</div>
+      <div class="tipo-tag">Eventos sociais</div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="sec faq-section escuro-sec">
+  <div class="sec-inner">
+    <div class="sec-header">
+      <h2 class="sec-titulo">Perguntas frequentes</h2>
+    </div>
+    <div class="faq-inner">
+      <div class="faq-item"><div class="faq-q">Com quanto tempo de antecedência preciso contratar?</div><div class="faq-a">O prazo mínimo é de 5 dias antes do evento. Precisamos desse tempo para entender o seu evento, montar o roteiro personalizado e fazer você aprovar os textos com tranquilidade.</div></div>
+      <div class="faq-item"><div class="faq-q">Como é feita a entrega do material?</div><div class="faq-a">Tudo no mesmo dia do evento. Os stories vão ao ar em tempo real. O vídeo principal e o material bruto são entregues via Google Drive ou AirDrop antes de você dormir.</div></div>
+      <div class="faq-item"><div class="faq-q">Como funciona o pagamento?</div><div class="faq-a">50% via Pix para reservar a data. Os outros 50% são pagos no dia do evento via Pix, ou o valor total pode ser pago no cartão de crédito.</div></div>
+      <div class="faq-item"><div class="faq-q">Vocês atendem fora do Grande ABC e São Paulo?</div><div class="faq-a">Atendemos toda a Grande São Paulo e Grande ABC Paulista com forte atuação no ABC. Para eventos fora dessas regiões, entre em contato para verificarmos disponibilidade.</div></div>
+      <div class="faq-item"><div class="faq-q">O que acontece se eu precisar de mais horas no dia do evento?</div><div class="faq-a">A partir de 9 horas, o valor por hora adicional fica fixo com 30% de desconto — R$175/hora no ABC e R$217/hora na Grande SP. Sempre comunicamos antes de ultrapassar o combinado.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">REINOW</div>
+  <div class="footer-sub">Cobertura Express · onde o ser humano é rei</div>
+  <a href="#orcamento" class="btn-top">Quero meu orçamento →</a>
+  <div class="footer-area">Grande ABC Paulista e Grande São Paulo · @reinowmarketing</div>
+</footer>
+
+<script>
+let horasSelecionadas = 0;
+function selecionarHora(n) {
+  horasSelecionadas = n;
+  document.querySelectorAll('.hora-btn').forEach((b,i) => b.classList.toggle('sel', i === n-1));
+}
+function calcularValor(horas, regiao) {
+  const base = regiao === 'abc' ? 250 : 310;
+  const desc = {1:0,2:5,3:10,4:15,5:20,6:22.5,7:25,8:27.5};
+  if (horas <= 8) return Math.round(base * horas * (1 - (desc[horas]||0)/100));
+  return calcularValor(8, regiao) + Math.round(base * 0.7 * (horas - 8));
+}
+function avancarStep2() {
+  if (!document.getElementById('local').value || !document.getElementById('tipo').value || !horasSelecionadas) { alert('Preencha todos os campos antes de continuar.'); return; }
+  document.getElementById('step1').classList.remove('ativo');
+  document.getElementById('step2').classList.add('ativo');
+}
+function voltarStep1() { document.getElementById('step2').classList.remove('ativo'); document.getElementById('step1').classList.add('ativo'); }
+function voltarStep2() { document.getElementById('step3').classList.remove('ativo'); document.getElementById('step2').classList.add('ativo'); }
+function avancarStep3() {
+  const nome = document.getElementById('nome').value.trim();
+  const wpp = document.getElementById('whatsapp').value.trim();
+  if (!nome || !wpp) { alert('Preencha seu nome e WhatsApp para continuar.'); return; }
+  const local = document.getElementById('local').value;
+  const tipo = document.getElementById('tipo').value;
+  const visibilidade = document.getElementById('visibilidade').value.trim();
+  const valor = calcularValor(horasSelecionadas, local);
+  const regiao = local === 'abc' ? 'Grande ABC' : 'Grande São Paulo';
+  const tipos = {corporativo:'Corporativo',social:'Social / Festa',feira:'Feira ou Congresso',lancamento:'Lançamento de produto',outro:'Outro'};
+  const horasTexto = horasSelecionadas >= 9 ? '9h ou mais' : horasSelecionadas + 'h';
+  document.getElementById('valor-resultado').textContent = 'R$ ' + valor.toLocaleString('pt-BR');
+  document.getElementById('detalhe-resultado').textContent = horasTexto + ' · ' + tipos[tipo] + ' · ' + regiao;
+  const msg = encodeURIComponent(`Olá! Fiz um orçamento pelo site.\n\n*Nome:* ${nome}\n*Evento:* ${tipos[tipo]}\n*Região:* ${regiao}\n*Horas:* ${horasTexto}\n*Como quer ser vista:* ${visibilidade||'não informado'}\n*Valor estimado:* R$ ${valor.toLocaleString('pt-BR')}\n\nPodemos conversar sobre os detalhes?`);
+  document.getElementById('btn-wpp').href = `https://wa.me/5511933259561?text=${msg}`;
+  document.getElementById('step2').classList.remove('ativo');
+  document.getElementById('step3').classList.add('ativo');
+  document.getElementById('orcamento').scrollIntoView({behavior:'smooth'});
+}
+</script>
+</body>
+</html>
